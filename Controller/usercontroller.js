@@ -130,7 +130,7 @@ export const signupuser=async(req,res)=>{
 
         const subject='your verification link';
 
-        const text=`Please verify your email by clicking on the following link:https://64fa308a9f05cd50be5cfad7--euphonious-dieffenbachia-caca63.netlify.app/${verificationtoken}`;
+        const text=`Please verify your email by clicking on the following link:https://64fa308a9f05cd50be5cfad7--euphonious-dieffenbachia-caca63.netlify.app/verify/${verificationtoken}`;
             console.log(email , subject , text)
             
         if(sendEmail(email , subject , text))
