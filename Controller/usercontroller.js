@@ -29,20 +29,34 @@ export const loginuser = async (req, res) => {
            
 
         
-            res.cookie("jwttoken" ,accessToken , refreshToken , {
-              expiresIn:'30min' , httpOnly:true
-            } ).status(200).json({message:"lOGGED IN SUCCESSFULLLY", accessToken: accessToken,
-            refreshToken: refreshToken,
-            email: user.email,
-            name: user.name,});
+            // res.cookie("jwttoken" ,accessToken , refreshToken , {
+            //   expiresIn:'30min' , httpOnly:true
+            // } ).status(200).json({message:"lOGGED IN SUCCESSFULLLY", accessToken: accessToken,
+            // refreshToken: refreshToken,
+            // email: user.email,
+            // name: user.name,});
+            if(email===process.env.ADMINEMAIL)
+            {
+              res.status(200).json({
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                email: user.email,
+                name: user.name,
+                message:"successful login",
+                role:"admin"
+              });
+            }
+            else{
 
-        // res.status(200).json({
-        //   accessToken: accessToken,
-        //   refreshToken: refreshToken,
-        //   email: user.email,
-        //   name: user.name,
-        //   message:"successful login"
-        // });
+              res.status(200).json({
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                email: user.email,
+                name: user.name,
+                message:"successful login",
+                role:"not authorise"
+              });
+            }
       } else {
         res.status(401).json({ message: "Password didn't match" });
       }
