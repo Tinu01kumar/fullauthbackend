@@ -130,7 +130,7 @@ export const signupuser=async(req,res)=>{
 
         const subject='your verification link';
 
-        const text=`Please verify your email by clicking on the following link:https://localhost:3000/verify/${verificationtoken}`;
+        const text=`Please verify your email by clicking on the following link: http://localhost:3000/verify/${verificationtoken}`;
             console.log(email , subject , text)
             
         if(sendEmail(email , subject , text))
