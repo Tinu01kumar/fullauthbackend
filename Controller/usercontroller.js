@@ -84,11 +84,7 @@ export const logoutuser=async(req, res)=>{
 
 
 
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/User'; // Import your User model
-import Verifytoken from '../models/Verifytoken'; // Import your Verifytoken model
-import { sendEmail } from './email'; // You should have a function to send emails
+
 
 export const signupuser = async (req, res) => {
   try {
@@ -101,7 +97,7 @@ export const signupuser = async (req, res) => {
     }
 
 
-    
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ message: 'Password does not meet the criteria' });
