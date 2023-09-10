@@ -37,7 +37,7 @@ export const loginuser = async (req, res) => {
             // name: user.name,});
             if(email===process.env.ADMINEMAIL)
             {
-              res.status(200).json({
+              return res.json({
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 email: user.email,
@@ -48,7 +48,7 @@ export const loginuser = async (req, res) => {
             }
             else{
 
-              res.status(200).json({
+              return  res.json({
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 email: user.email,
@@ -58,17 +58,17 @@ export const loginuser = async (req, res) => {
               });
             }
       } else {
-        res.status(401).json({ message: "Password didn't match" });
+        return res.json({ message: "Password didn't match" });
       }
     }else{
       res.json({message:"email is not verified"})
     } 
     
   }else {
-      res.status(404).json({ message: "User not registered" });
+      return res.json({ message: "User not registered" });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.json({ error: error.message });
   }
 };
 
@@ -107,34 +107,41 @@ export const signupuser = async (req, res) => {
       specialChar: /^(?=.*[@$!%*#?&^])/.test(password),
       length: password.length >= 8,
     };
-
+  
+    
     const invalidRequirements = [];
     for (const key in passwordValidation) {
       if (!passwordValidation[key]) {
         invalidRequirements.push(key);
       }
     }
+     console.log(invalidRequirements.length)
+  
 
-    if (invalidRequirements.length > 0) {
-      const errorMessages = invalidRequirements.map((key) => {
-        switch (key) {
-          case 'lowercase':
-            return 'Lowercase letters are missing. \n';
-          case 'uppercase':
-            return 'Uppercase letters are missing. \n';
-          case 'digit':
-            return 'Digits are missing.';
-          case 'specialChar':
-            return 'Special characters are missing. \n';
-          case 'length':
-            return 'Password length should be at least 8 characters. \n';
-          default:
-            return 'Invalid password criteria. \n';
-        }
-      });
-
-      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join('')}`, errors: errorMessages });
-    }
+     
+      if (invalidRequirements.length > 0) {
+        console.log("df");
+        const errorMessages = invalidRequirements.map( (key) => {
+          switch (key) {
+            case 'lowercase':
+              return 'Lowercase letters are missing. \n';
+            case 'uppercase':
+              return 'Uppercase letters are missing. \n';
+            case 'digit':
+              return 'Digits are missing.\n';
+            case 'specialChar':
+              return 'Special characters are missing. \n';
+            case 'length':
+              return 'Password length should be at least 8 characters. \n';
+            default:
+              return 'Invalid password criteria. \n';
+          }
+        });
+    
+        return res.json({ position: "failure", message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}`, errors: errorMessages });
+      }
+    
+  
 
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -309,11 +316,52 @@ export const Otpverification = async (req, res) => {
 export const Changepassword=async(req, res)=>{
   const userid=req.body.id;
   const password=req.body.password;
-  console.log(userid , password)
+   
+    
+  const passwordValidation = {
+    lowercase: /^(?=.*[a-z])/.test(password),
+    uppercase: /^(?=.*[A-Z])/.test(password),
+    digit: /^(?=.*\d)/.test(password),
+    specialChar: /^(?=.*[@$!%*#?&^])/.test(password),
+    length: password.length >= 8,
+  };
 
+  
+  const invalidRequirements = [];
+  for (const key in passwordValidation) {
+    if (!passwordValidation[key]) {
+      invalidRequirements.push(key);
+    }
+  }
+   console.log(invalidRequirements.length)
+
+
+   
+    if (invalidRequirements.length > 0) {
+      console.log("df");
+      const errorMessages = invalidRequirements.map( (key) => {
+        switch (key) {
+          case 'lowercase':
+            return 'Lowercase letters are missing. \n';
+          case 'uppercase':
+            return 'Uppercase letters are missing. \n';
+          case 'digit':
+            return 'Digits are missing.\n';
+          case 'specialChar':
+            return 'Special characters are missing. \n';
+          case 'length':
+            return 'Password length should be at least 8 characters. \n';
+          default:
+            return 'Invalid password criteria. \n';
+        }
+      });
+  
+      return res.json({ position: "failure", message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}`, errors: errorMessages });
+    }
+  
    const user=await User.findOne({_id:userid})
    try{
-
+     
    
   if(user)
   {
@@ -327,7 +375,7 @@ export const Changepassword=async(req, res)=>{
   }
 }catch(error)
 {
-  res.status(500).json({error:"error while password change", error});
+  res.json({error:"error while password change", error});
 }
 
   
