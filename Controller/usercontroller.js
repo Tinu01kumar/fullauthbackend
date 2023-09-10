@@ -89,7 +89,7 @@ export const logoutuser=async(req, res)=>{
 export const signupuser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
+     console.log(password)
     // Validate the password against your criteria
     const existingUser = await User.findOne({ email });
     if (existingUser && existingUser.status === true) {
@@ -104,7 +104,7 @@ export const signupuser = async (req, res) => {
       lowercase: /^(?=.*[a-z])/.test(password),
       uppercase: /^(?=.*[A-Z])/.test(password),
       digit: /^(?=.*\d)/.test(password),
-      specialChar: /^(?=.*[@$!%*?&])/.test(password),
+      specialChar: /^(?=.*[@$!%*#?&])/.test(password),
       length: password.length >= 8,
     };
 
