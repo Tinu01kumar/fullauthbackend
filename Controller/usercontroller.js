@@ -116,7 +116,7 @@ export const signupuser = async (req, res) => {
     }
 
     if (invalidRequirements.length > 0) {
-      return res.status(400).json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}` });
+      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}` });
     }
 
 
