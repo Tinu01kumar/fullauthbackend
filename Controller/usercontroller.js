@@ -98,9 +98,25 @@ export const signupuser = async (req, res) => {
 
 
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({ message: 'Password does not meet the criteria' });
+ 
+    
+    const passwordValidation = {
+      lowercase: /^(?=.*[a-z])/.test(password),
+      uppercase: /^(?=.*[A-Z])/.test(password),
+      digit: /^(?=.*\d)/.test(password),
+      specialChar: /^(?=.*[@$!%*?&])/.test(password),
+      length: password.length >= 8,
+    };
+
+    const invalidRequirements = [];
+    for (const key in passwordValidation) {
+      if (!passwordValidation[key]) {
+        invalidRequirements.push(key);
+      }
+    }
+
+    if (invalidRequirements.length > 0) {
+      return res.status(400).json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}` });
     }
 
 
