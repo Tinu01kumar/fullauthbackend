@@ -104,7 +104,7 @@ export const signupuser = async (req, res) => {
       lowercase: /^(?=.*[a-z])/.test(password),
       uppercase: /^(?=.*[A-Z])/.test(password),
       digit: /^(?=.*\d)/.test(password),
-      specialChar: /^(?=.*[@$!%*#?&])/.test(password),
+      specialChar: /^(?=.*[@$!%*#?&^])/.test(password),
       length: password.length >= 8,
     };
 
@@ -116,7 +116,24 @@ export const signupuser = async (req, res) => {
     }
 
     if (invalidRequirements.length > 0) {
-      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}` });
+      const errorMessages = invalidRequirements.map((key) => {
+        switch (key) {
+          case 'lowercase':
+            return 'Lowercase letters are missing.';
+          case 'uppercase':
+            return 'Uppercase letters are missing.';
+          case 'digit':
+            return 'Digits are missing.';
+          case 'specialChar':
+            return 'Special characters are missing.';
+          case 'length':
+            return 'Password length should be at least 8 characters.';
+          default:
+            return 'Invalid password criteria.';
+        }
+      });
+
+      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}`, errors: errorMessages });
     }
 
 
