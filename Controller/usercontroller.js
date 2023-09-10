@@ -119,21 +119,21 @@ export const signupuser = async (req, res) => {
       const errorMessages = invalidRequirements.map((key) => {
         switch (key) {
           case 'lowercase':
-            return 'Lowercase letters are missing.';
+            return 'Lowercase letters are missing. \n';
           case 'uppercase':
-            return 'Uppercase letters are missing.';
+            return 'Uppercase letters are missing. \n';
           case 'digit':
             return 'Digits are missing.';
           case 'specialChar':
-            return 'Special characters are missing.';
+            return 'Special characters are missing. \n';
           case 'length':
-            return 'Password length should be at least 8 characters.';
+            return 'Password length should be at least 8 characters. \n';
           default:
-            return 'Invalid password criteria.';
+            return 'Invalid password criteria. \n';
         }
       });
 
-      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join(', ')}`, errors: errorMessages });
+      return res.json({ message: `Password does not meet the criteria. Missing: ${invalidRequirements.join('')}`, errors: errorMessages });
     }
 
 
