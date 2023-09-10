@@ -84,70 +84,67 @@ export const logoutuser=async(req, res)=>{
 
 
 
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../models/User'; // Import your User model
+import Verifytoken from '../models/Verifytoken'; // Import your Verifytoken model
+import { sendEmail } from './email'; // You should have a function to send emails
 
-export const signupuser=async(req,res)=>{
-   try {
-      const { name, email, password  } = req.body;
-      
-      const existingUser = await User.findOne({ email });
-      if (existingUser && existingUser.status===true) {
-        // res.status(409).json({ message: "User already registered" });
-          res.json({message:"user already registered"})
-      } else {
-        
+export const signupuser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-        const hashedPassword = bcrypt.hashSync(password, 10);
-        const newUser = new User({
-          name,
-          email,
-          password: hashedPassword,
-          status:false
-        });
-        await newUser.save();
-
-
-   
-
-
-        const verificationtoken = jwt.sign({ email }, process.env.VERIFICATIONTOKEN, { expiresIn: '10m' });
-
-        const emailverify = new Verifiytoken({
-          email: email,
-          token: verificationtoken,
-      
-          expireIn: new Date().getTime() + 600 * 1000,
-        });
-
-
-        console.log(emailverify);
-
-        await emailverify.save()
-        .catch((error) => {
-          console.error("Error while saving email verification token:", error);
-          res.status(500).json({ error: "Internal server error" });
-        });
-      
-
-        const subject='your verification link';
-
-        const text=`Please verify your email by clicking on the following link: https://super-kringle-25170f.netlify.app/#/verify/${verificationtoken}`;
-            console.log(email , subject , text)
-            
-        if(sendEmail(email , subject , text))
-        {
-          res.json({message:" verification Email sent to your mail"})
-        }
-        else {
-          res.json({message:"Email not sent"})
-        }
-        
-
-      
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Validate the password against your criteria
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser.status === true) {
+      return res.json({ message: 'User already registered' });
     }
-}
+
+
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: 'Password does not meet the criteria' });
+    }
+
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      status: false,
+    });
+    await newUser.save();
+
+    const verificationtoken = jwt.sign({ email }, process.env.VERIFICATIONTOKEN, {
+      expiresIn: '10m',
+    });
+
+    const emailverify = new Verifytoken({
+      email: email,
+      token: verificationtoken,
+      expireIn: new Date().getTime() + 600 * 1000,
+    });
+
+    await emailverify.save().catch((error) => {
+      console.error('Error while saving email verification token:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    });
+
+    const subject = 'Your verification link';
+    const text = `Please verify your email by clicking on the following link: https://super-kringle-25170f.netlify.app/#/verify/${verificationtoken}`;
+    
+    if (sendEmail(email, subject, text)) {
+      return res.json({ message: 'Verification Email sent to your mail' });
+    } else {
+      return res.json({ message: 'Email not sent' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 
