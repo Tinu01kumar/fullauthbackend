@@ -133,7 +133,7 @@ export const signupuser = async (req, res) => {
       expiresIn: '10m',
     });
 
-    const emailverify = new Verifytoken({
+    const emailverify = new Verifiytoken({
       email: email,
       token: verificationtoken,
       expireIn: new Date().getTime() + 600 * 1000,
