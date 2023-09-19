@@ -1,5 +1,5 @@
 import  express  from "express";
-import { signupuser , verifytokenbyuser, loginuser , forgotpassword ,Otpverification , Changepassword} from "../Controller/usercontroller.js";
+import { signupuser , verifytokenbyuser, loginuser , forgotpassword ,Otpverification , Changepassword , logoutuser} from "../Controller/usercontroller.js";
 import { fetchallemail  , deletemail} from "../Controller/admin.js";
 
 
@@ -13,6 +13,7 @@ const router=express.Router();
 router.post('/register' , signupuser)
 
 router.post('/login',  loginuser)
+router.post('/logout', logoutuser);
 router.post('/forgotpassword' , forgotpassword)
 
 

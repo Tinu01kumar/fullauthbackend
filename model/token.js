@@ -8,6 +8,6 @@ const TokenSchema=mongoose.Schema({
 });
 
 
-const token =mongoose.model('token' , TokenSchema);
+const Token =mongoose.model('Token' , TokenSchema);
 
-export default token;
+export default Token;

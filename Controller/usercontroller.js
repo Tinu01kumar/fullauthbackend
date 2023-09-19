@@ -12,6 +12,7 @@ dotenv.config();
 
 export const loginuser = async (req, res) => {
   try {
+    console.log("dsf" , req.body)
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {
@@ -76,8 +77,9 @@ export const loginuser = async (req, res) => {
 
 export const logoutuser=async(req, res)=>{
      const token=req.body.token;
-     await Token.deletOne({token:token});
-     res.status(204).json({msg:'logout successfull'});     
+     console.log(token)
+     await Token.deleteOne({token:token});
+     res.json({msg:'logout successfull'});     
 }
 
 
