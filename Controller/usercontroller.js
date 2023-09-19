@@ -14,7 +14,8 @@ export const loginuser = async (req, res) => {
   try {
 
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const lowercaseEmail = email.toLowerCase();
+    const user = await User.findOne({ email : lowercaseEmail});
     if (user) {
       if(user.status===true)
       {
@@ -149,7 +150,7 @@ export const signupuser = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
     const newUser = new User({
       name,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       status: false,
     });
