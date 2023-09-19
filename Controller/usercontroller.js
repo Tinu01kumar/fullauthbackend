@@ -12,7 +12,7 @@ dotenv.config();
 
 export const loginuser = async (req, res) => {
   try {
-    console.log("dsf" , req.body)
+
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {
@@ -77,7 +77,7 @@ export const loginuser = async (req, res) => {
 
 export const logoutuser=async(req, res)=>{
      const token=req.body.token;
-     console.log(token)
+ 
      await Token.deleteOne({token:token});
      res.json({msg:'logout successfull'});     
 }
@@ -91,8 +91,8 @@ export const logoutuser=async(req, res)=>{
 export const signupuser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-     console.log(password)
-    // Validate the password against your criteria
+    
+ 
     const existingUser = await User.findOne({ email });
     if (existingUser && existingUser.status === true) {
       return res.json({ message: 'User already registered' });
@@ -117,7 +117,7 @@ export const signupuser = async (req, res) => {
         invalidRequirements.push(key);
       }
     }
-     console.log(invalidRequirements.length)
+    
   
 
      
@@ -188,7 +188,7 @@ export const signupuser = async (req, res) => {
 
 export const verifytokenbyuser = async (req, res) => {
   const { token } = req.params;
-  console.log("Received token:", token);
+  
   jwt.verify(token, process.env.VERIFICATIONTOKEN, async (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError") {
@@ -201,7 +201,7 @@ export const verifytokenbyuser = async (req, res) => {
       try {
         const savedToken = await Verifiytoken.findOne({ email: decoded.email }).sort({ expireIn: -1 });
         if (savedToken.token === token) {
-          console.log("Decoded data:", decoded);
+         
           const statuscheck = await User.findOne({ email: decoded.email });
           if (statuscheck.status === false) {
             statuscheck.status = true;
@@ -211,7 +211,7 @@ export const verifytokenbyuser = async (req, res) => {
             res.send("Email is already verified");
           }
         } else {
-          console.log("Decoded data:", decoded);
+          
           res.send("Not verified");
         }
       } catch (error) {
@@ -277,23 +277,17 @@ export const forgotpassword = async (req, res) => {
 export const Otpverification = async (req, res) => {
   const frontendCode = req.body.code;
   const otpid = req.body.id;
-  console.log(otpid);
-  console.log(frontendCode)
+ 
 
   try {
-    // Assuming 'code' is the correct field name to fetch the OTP code from the database
+  
     const databasetotpcode=await Otp.findOne({_id: otpid});
       
-    if(databasetotpcode)
-    {
-
-      console.log( databasetotpcode.code);
-    
-    }
+ 
     if (databasetotpcode.code===frontendCode) {
       const user_id_email=databasetotpcode.email
       const userid=await User.findOne({email: user_id_email})
-      console.log(userid._id)
+   
       res.json({ message: "Code is correct"  ,
         id:userid._id });
     } 
@@ -335,12 +329,12 @@ export const Changepassword=async(req, res)=>{
       invalidRequirements.push(key);
     }
   }
-   console.log(invalidRequirements.length)
+ 
 
 
    
     if (invalidRequirements.length > 0) {
-      console.log("df");
+    
       const errorMessages = invalidRequirements.map( (key) => {
         switch (key) {
           case 'lowercase':
