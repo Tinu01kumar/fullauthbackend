@@ -16,7 +16,7 @@ export const deletemail = async (req, res) => {
   try {
     const { email } = req.body;
     
-    // Use Mongoose to find and delete the user by email
+   
     const deletedUser = await user.findOneAndDelete({ email });
 
     if (deletedUser) {
