@@ -176,7 +176,7 @@ export const signupuser = async (req, res) => {
     });
 
     const subject = 'Your verification link';
-    const text = `Please verify your email by clicking on the following link: https://super-kringle-25170f.netlify.app/#/verify/${verificationtoken}`;
+    const text = `Please verify your email by clicking on the following link: https://localhost:9000/#/verify/${verificationtoken}`;
     
     if (sendEmail(email, subject, text)) {
       return res.json({ message: 'Verification Email sent to your mail' });
@@ -187,6 +187,7 @@ export const signupuser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
