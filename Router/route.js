@@ -1,7 +1,7 @@
 import  express  from "express";
-import { signupuser , verifytokenbyuser, loginuser , forgotpassword ,Otpverification , Changepassword , logoutuser} from "../Controller/usercontroller.js";
+import { signupuser , verifytokenbyuser, loginuser , forgotpassword ,Otpverification , Changepassword , logoutuser , uploadimage,getImagesByEmail, deleteImage} from "../Controller/usercontroller.js";
 import { fetchallemail  , deletemail} from "../Controller/admin.js";
-
+import { upload } from "../Controller/usercontroller.js";
 const isAdminAPIAuthorized = (req, res, next) => {
     // Assuming you have user information stored in req.user after authentication.
     if (req.user && req.user.role === 'admin' && req.user.permissions.includes('access_admin_api')) {
@@ -29,8 +29,10 @@ router.post('/forgotpassword' , forgotpassword)
 router.post('/otpverification' , Otpverification)
 
 router.post('/changepassword' , Changepassword)
-
+router.post('/imageupload', upload.single('file') , uploadimage);
 router.put('/verify/:token' , verifytokenbyuser )
 router.get('/admin/api' ,isAdminAPIAuthorized , fetchallemail)
 router.post('/admin/email/delete' ,deletemail)
+router.get('/getimages/:email', getImagesByEmail);
+router.delete('/deleteimage/:email/:image', deleteImage);
 export default router;

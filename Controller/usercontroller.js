@@ -4,9 +4,13 @@ import dotenv from 'dotenv';
 import User from "../model/user.js"
 import Token from '../model/token.js';
 import Otp from '../model/otp.js';
-
+import multer from "multer";
 import sendEmail from '../Utils/sendEmail.js';
+import Imagefile from '../model/image.js';
+import path from 'path';
 import Verifiytoken from '../model/verification.js';
+import fs from 'fs';
+
 dotenv.config();
 
 
@@ -243,6 +247,7 @@ export const verifytokenbyuser = async (req, res) => {
 export const forgotpassword = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("sdfsdf" , email)
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -299,7 +304,6 @@ export const Otpverification = async (req, res) => {
     res.status(500).json({ error: "Error while OTP checking", error });
   }
 };
-
 
 
 
@@ -381,9 +385,77 @@ export const Changepassword=async(req, res)=>{
 
 
 
+export const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/Images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname + "_" + Date.now() + path.extname(file.originalname));
+  },
+});
+
+
+export const upload = multer({
+  storage: storage,
+});
 
 
 
+export const uploadimage = async (req, res) => {
+  const userEmail = req.body.email;
+  console.log({ email: userEmail });
+
+  Imagefile.create({ email: userEmail, image: req.file.filename })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
+};
+
+export const getImagesByEmail = async (req, res) => {
+  const userEmail = req.params.email; // Access email from the request parameters
+  console.log({ email: userEmail });
+
+  Imagefile.find({ email: userEmail })
+    .then((images) => {
+      res.json(images);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
+};
 
 
 
+// Import necessary modules and models at the top of your file
+// ...
+
+export const deleteImage = async (req, res) => {
+  const { email, image } = req.params;
+
+  try {
+    // Find and delete the image record from the Imagefile collection
+    const deletedImage = await Imagefile.findOneAndDelete({ email, image });
+
+    if (!deletedImage) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
+
+    // Use fs.unlink to delete the actual file from the server
+    const imagePath = path.join('public/Images', deletedImage.image);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error('Error deleting image file:', err);
+      }
+    });
+
+    res.json({ message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
